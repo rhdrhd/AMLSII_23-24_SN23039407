@@ -8,3 +8,7 @@ pandas
 seaborn
 matplotlib
 opencv-python
+torchinfo
+timm
+rich
+scikit-learn
