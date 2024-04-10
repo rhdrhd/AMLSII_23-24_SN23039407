@@ -74,7 +74,7 @@ WIDTH = 512 #224 for ViT
 HEIGHT = 512 #224
 NUM_CLASSES = 5
 BATCH_SIZE = 16
-model_name = "efficientnet_b3"
+model_name = "resnet50"
 num_epochs = 10
 patience = 3
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
@@ -85,8 +85,18 @@ print(f'Device: {DEVICE}')
 
 def get_model(name):
     
-    if name == "resnet18":
-        model = models.resnet18(weights=models.ResNet18_Weights.DEFAULT)
+    if name == "resnet50":
+        model = models.resnet50(weights=models.ResNet50_Weights.DEFAULT)
+        for param in model.parameters():
+            param.requires_grad = False
+        
+        in_feat = model.fc.in_features
+        
+        model.fc = nn.Sequential(
+              nn.Linear(in_feat, NUM_CLASSES)
+              )
+    elif name =="resnext50_32x4d":
+        model = timm.create_model('resnext50_32x4d', pretrained=True)
         for param in model.parameters():
             param.requires_grad = False
         
@@ -309,7 +319,7 @@ def kfold_train(model_name, num_epochs, train_df, num_folds=5):
         loss_fn = nn.CrossEntropyLoss()
         optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
         #scheduler = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer, T_0=10, T_mult=1, eta_min=1e-4, last_epoch=-1)
-        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min', factor=0.1, patience=10)
+        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min', factor=0.1, patience=3)
 
 
         best_model_wts = copy.deepcopy(model.state_dict())
@@ -376,8 +386,8 @@ def kfold_train(model_name, num_epochs, train_df, num_folds=5):
                 best_model_wts = copy.deepcopy(model.state_dict())
                 print(f'New best accuracy: {best_acc} at fold {best_fold} epoch {epoch}' )
                     
-            print(f'Fold {fold+1}    Epoch {epoch+1}   Train accuracy: {accuracy_hist_train[epoch]:.4f}    Validation accuracy: {accuracy_hist_valid[epoch]:.4f}  Learning Rate: {current_lr}')
-            wandb.log({"Fold": fold+1, "Epoch": epoch+1, "Train loss": loss_hist_train[epoch], "Validation loss": loss_hist_valid[epoch], "Train accuracy": accuracy_hist_train[epoch], "Validation accuracy":accuracy_hist_valid[epoch], "Learning Rate": current_lr})
+            print(f'Fold {fold}    Epoch {epoch}   Train accuracy: {accuracy_hist_train[epoch]:.4f}    Validation accuracy: {accuracy_hist_valid[epoch]:.4f}  Learning Rate: {current_lr}')
+            wandb.log({"Fold": fold, "Epoch": epoch, "Train loss": loss_hist_train[epoch], "Validation loss": loss_hist_valid[epoch], "Train accuracy": accuracy_hist_train[epoch], "Validation accuracy":accuracy_hist_valid[epoch], "Learning Rate": current_lr})
 
             if loss_hist_valid[epoch] < min_valid_loss:
                 min_valid_loss = loss_hist_valid[epoch]
@@ -391,7 +401,7 @@ def kfold_train(model_name, num_epochs, train_df, num_folds=5):
         
     print(f'Best model was from fold {best_fold} with an accuracy of {best_acc}')
 
-    if model_name in ["resnet18","resnet50"]:
+    if model_name in ["resnet18","resnet50","resnext50_32x4d"]:
         torch.save(best_model_wts, f'A/{model_name}_best.pth')
     elif model_name in ["efficientnet_b3","efficientnet_b4","vit"]:
         torch.save(best_model_wts, f'B/{model_name}_best.pth')
