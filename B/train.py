@@ -186,7 +186,7 @@ def kfold_train(model_name, num_epochs, train_df, num_folds, input_size, batch_s
 
         loss_fn = nn.CrossEntropyLoss()
         optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
-        #scheduler = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer, T_0=10, T_mult=1, eta_min=1e-4, last_epoch=-1)
+
         scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min', factor=0.1, patience=3)
 
 
@@ -272,6 +272,3 @@ def kfold_train(model_name, num_epochs, train_df, num_folds, input_size, batch_s
         torch.save(best_model_wts, f'B/{model_name}_best.pth')
 
 
-#kfold_train(model_name, num_epochs, train_df, num_folds=5)
-
-#wandb.finish()

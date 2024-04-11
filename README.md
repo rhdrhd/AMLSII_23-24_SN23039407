@@ -4,9 +4,9 @@ This repo presents the development and evaluation of two specialized machine lea
 
 **main.py**: Contains the run file of the project, including the training and testing options of the models for Task A and Task B.
 
-**A**: Contains Jupyter Notebooks version code is stored in this folder
+**A**: Contains the test files used in development and Jupyter Notebooks version code is stored in this folder
 
-**B**: Contains the core of the project train.py, which executes the training
+**B**: Contains the core of the project, including train.py, helper.py and config.json, which together execute the training process. Model configurations are stored in config.json.
 
 ## How to start
 1. Create a new conda environment from environment.yml file.
@@ -24,25 +24,14 @@ conda activate aml2
 ```
 python main.py
 ```
-### 5 Fold (10 Epoch) (Batch Size: 16)
+5. The training configuration can be changed in B/config.json
+### Model Log
 
-| Model                 | Weights  | Dropout | Accuracy (%) | Image Size | Seed |
-|-----------------------|----------|---------|--------------|------------|------|
-| ResNet50              | Frozen   | No      | 80.09        | 512        | 23   |
-| ResNeXt50_32x4d       | Frozen   | No      | 75.93        | 512        | 23   |
-| EfficientNet-B3       | Frozen   | No      | 80.74        | 512        | 23   |
-| EfficientNet-B4       | Unfrozen | No      | -            | 384        | 23   |
-| ViT-Large Patch32_384 | Unfrozen | No      | -            | 384        | 729  |
-
-### 5 Fold (15 Epoch) (Batch Size: 16)
-
-| Model            | Weights  | Dropout | Image Size | Seed |
-|------------------|----------|---------|------------|------|
-| EfficientNet-B4  | Unfrozen | 0.3     | 384        | 23   |
-
-### Random Split (20 Epoch)
-
-| Model            | Weights | Dropout | Image Size | Seed | Notes            |
-|------------------|---------|---------|------------|------|------------------|
-| EfficientNet-B4  | Frozen  | No      | 512        | 23   | -                |
-| EfficientNet-B4  | Frozen  | No      | 512        | 23   | Duplicate entry  |
+| Model                       | Weights  | Dropout   | Image Size | Seed | Epochs | Accuracy (%) |
+|-----------------------------|----------|-----------|------------|------|--------|--------------|
+| ResNet50                    | Frozen   | No        | 512        | 23   | 10     | 80.09        |
+| EfficientNet_B4             | Frozen   | No        | 384        | 23   | 10     | 80.74        |
+| EfficientNet_B4             | Unfrozen | No        | 384        | 23   | 10     | 86.80        |
+| EfficientNet_B4             | Unfrozen | Yes (0.3) | 384        | 23   | 15     | 86.07        |
+| EfficientNet_B4             | Unfrozen | Yes (0.3) | 384        | 23   | 30     | 87.73        |
+| ViT-Large_Patch32_384       | Unfrozen | No        | 384        | 729  | 10     | 65.34        |

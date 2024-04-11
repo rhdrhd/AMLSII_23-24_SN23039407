@@ -29,18 +29,19 @@ train_df['path'] = TRAIN_IMAGES_PATH + '/' + train_df['image_id']
 
 
 # Track the progress using wandb
-wandb.init(
-    project="aml2",
-    entity= "zirui23",
-    # track hyperparameters and run metadata
-    config={
-    "architecture": model_name,
-    "epochs": num_epochs,
-    "batch_size": batch_size,
-    "input_size": input_size
-    }
-)
+# Uncomment this to use wandb
+# wandb.init(
+#    project="aml2",
+#    entity= "zirui23",
+#    # track hyperparameters and run metadata
+#    config={
+#    "architecture": model_name,
+#    "epochs": num_epochs,
+#    "batch_size": batch_size,
+#    "input_size": input_size
+#    }
+# )
 
 train.kfold_train(model_name, num_epochs, train_df, num_folds, input_size, batch_size, patience, device)
 
-wandb.finish()
+#wandb.finish()
