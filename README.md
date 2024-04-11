@@ -24,7 +24,8 @@ conda activate aml2
 ```
 python main.py
 ```
-5. The training configuration can be changed in B/config.json
+5. The training configuration can be changed in B/config.json. The current configuration is set to train the EfficientNet_B4 model with unfrozen weights and one dropout of 0.3 for 30 epochs, with batch size as 16, early stopping patience as 7 epochs, initial learning rate as 0.001, image input size as 384, and only the best fold (5th) is used for training.
+
 ### Model Log
 
 | Model                       | Weights  | Dropout   | Image Size | Seed | Epochs | Accuracy (%) |
