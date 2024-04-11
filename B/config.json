@@ -1,0 +1,14 @@
+{
+    "model": {
+      "name": "efficientnet_b4",
+      "input_size": 384,
+      "num_classes": 5
+    },
+    "training": {
+      "batch_size": 16,
+      "epochs": 30,
+      "patience": 7,
+      "num_folds": 5,
+      "device": "cuda"
+    }
+  }

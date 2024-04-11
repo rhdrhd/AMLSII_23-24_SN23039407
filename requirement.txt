@@ -12,3 +12,4 @@ torchinfo
 timm
 rich
 scikit-learn
+wandb
